@@ -73,7 +73,11 @@ app.get('*', (req, res) => {
   });
 });
 
-// Start Server Listening
-app.listen(PORT, () => {
-  console.log(`TrueTwist server running locally on http://localhost:${PORT}`);
-});
+// Start Server Listening (only if run directly, not when required by Vercel serverless)
+if (require.main === module && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`TrueTwist server running locally on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

@@ -3,7 +3,9 @@ const { open } = require('sqlite');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 
-const dbPath = path.join(__dirname, 'employeehub.db');
+const dbPath = process.env.VERCEL
+  ? '/tmp/employeehub.db'
+  : path.join(__dirname, 'employeehub.db');
 
 async function getDbConnection() {
   return open({

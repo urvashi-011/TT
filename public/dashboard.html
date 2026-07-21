@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Portal - TrueTwist</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Custom Styling -->
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar collapsed">
+      <div class="sidebar-header d-flex justify-content-center py-3">
+        <img src="/logo.png" alt="TrueTwist Logo" style="max-height: 110px; width: auto; object-fit: contain;">
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item active" data-tab="tab-dashboard">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-chart-pie"></i>Dashboard
+          </a>
+        </li>
+        <li class="sidebar-menu-item" data-tab="tab-attendance">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-calendar-check"></i>My Attendance
+          </a>
+        </li>
+        <li class="sidebar-menu-item" data-tab="tab-leave">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-envelope-open-text"></i>Apply Leave
+          </a>
+        </li>
+        <li class="sidebar-menu-item" data-tab="tab-salary">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-wallet"></i>Salary Details
+          </a>
+        </li>
+        <li class="sidebar-menu-item" data-tab="tab-profile">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-id-card"></i>My Profile
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-outline-danger w-100 border-0 text-start ps-3" onclick="logout()">
+          <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main class="main-content">
+      <!-- Top Navbar Header -->
+      <header class="top-navbar">
+        <div class="d-flex align-items-center">
+          <button class="navbar-toggle-btn me-3"><i class="fa-solid fa-bars"></i></button>
+          <h5 class="mb-0 fw-semibold text-secondary" id="page-title">Dashboard Overview</h5>
+        </div>
+        
+        <div class="d-flex align-items-center">
+          <span class="me-3 text-secondary d-none d-md-inline">Welcome, <strong class="user-fullname" style="color: #1f2937;">Employee</strong></span>
+          <div class="avatar-circle user-initials">EH</div>
+        </div>
+      </header>
+
+      <!-- Viewport Body -->
+      <div class="content-body">
+        
+        <!-- ================= SECTION 1: DASHBOARD ================= -->
+        <section id="tab-dashboard" class="tab-content fade-in">
+          <div class="row g-4 mb-4">
+            <!-- Attendance Clock Widget -->
+            <div class="col-lg-5">
+              <div class="clock-widget h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="clock-time" id="live-clock">00:00:00</div>
+                <div class="clock-date" id="live-date">Monday, June 29, 2026</div>
+                
+                <div class="mt-2 w-100">
+                  <div class="mb-3">
+                    Status Today: <span class="status-badge bg-white text-dark ms-2 fw-bold" id="today-status-badge">Absent</span>
+                  </div>
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <button class="btn btn-success w-100 py-2 border-0" id="btn-checkin" onclick="performCheckIn()">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i>Check In
+                      </button>
+                    </div>
+                    <div class="col-6">
+                      <button class="btn btn-danger w-100 py-2 border-0" id="btn-checkout" onclick="performCheckOut()" disabled>
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>Check Out
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row g-2 mt-2">
+                    <div class="col-6">
+                      <button class="btn btn-warning w-100 py-2 border-0 fw-semibold text-white d-none" id="btn-break-lunch" onclick="performBreak('lunch')">
+                        <i class="fa-solid fa-bowl-food me-2"></i>Lunch Break
+                      </button>
+                    </div>
+                    <div class="col-6">
+                      <button class="btn btn-info w-100 py-2 border-0 fw-semibold text-white d-none" id="btn-break-tea" onclick="performBreak('tea')">
+                        <i class="fa-solid fa-mug-hot me-2"></i>Tea Break
+                      </button>
+                    </div>
+                  </div>
+                  <div class="text-center mt-3" style="font-size: 0.85rem;" id="attendance-log-today">
+                    <!-- Logs check-in/out times -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Column -->
+            <div class="col-lg-7">
+              <div class="row g-4">
+                <!-- Present Count -->
+                <div class="col-sm-6">
+                  <div class="stat-card stat-card-success p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <p class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem; letter-spacing: 0.5px;">Present This Month</p>
+                        <h3 class="mb-0 fw-bold" id="stat-present-count">0</h3>
+                      </div>
+                      <div class="stat-card-icon">
+                        <i class="fa-solid fa-user-check"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Monthly Leaves Approved -->
+                <div class="col-sm-6">
+                  <div class="stat-card stat-card-warning p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <p class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem; letter-spacing: 0.5px;">Leaves This Month</p>
+                        <h3 class="mb-0 fw-bold" id="stat-leaves-count">0</h3>
+                      </div>
+                      <div class="stat-card-icon">
+                        <i class="fa-solid fa-mug-hot"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pending Applications -->
+                <div class="col-sm-6">
+                  <div class="stat-card stat-card-primary p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <p class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem; letter-spacing: 0.5px;">Pending Leaves</p>
+                        <h3 class="mb-0 fw-bold" id="stat-pending-count">0</h3>
+                      </div>
+                      <div class="stat-card-icon">
+                        <i class="fa-solid fa-clock"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Profile card summary -->
+                <div class="col-sm-6">
+                  <div class="stat-card p-4 h-100 bg-light border-0">
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-circle avatar-large me-3 ms-0 user-initials">EH</div>
+                      <div>
+                        <h6 class="mb-0 fw-bold user-fullname">Employee Name</h6>
+                        <p class="text-muted mb-1" id="profile-designation-badge">Role</p>
+                        <span class="status-badge badge-present bg-success-subtle text-success py-1 px-2 font-monospace" style="font-size: 0.75rem;" id="profile-dept-badge">Dept</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Holidays & Notices Row -->
+          <div class="row g-4 mt-2">
+            <div class="col-12">
+              <div class="card-main">
+                <div class="card-header d-flex align-items-center">
+                  <h5 class="mb-0"><i class="fa-solid fa-umbrella-beach text-primary me-2"></i>Upcoming Holidays & Notices</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row" id="holiday-notices-container">
+                    <span class="text-muted"><i class="fa-solid fa-spinner fa-spin me-2"></i>Loading upcoming holidays...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 2: ATTENDANCE HISTORY ================= -->
+        <section id="tab-attendance" class="tab-content d-none fade-in">
+          <div class="card-main">
+            <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <h5 class="mb-0"><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i>My Monthly Attendance Log</h5>
+              <div class="d-flex align-items-center gap-2">
+                <label for="filter-month" class="text-muted text-nowrap mb-0 me-1" style="font-size: 0.85rem;">Filter Month:</label>
+                <input type="month" id="filter-month" class="form-control form-control-sm" style="max-width: 160px;" onchange="loadAttendanceHistory()">
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hub mb-0">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Check In</th>
+                      <th>Check Out</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendance-history-table">
+                    <!-- Dynamic rendering -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 3: APPLY LEAVE ================= -->
+        <section id="tab-leave" class="tab-content d-none fade-in">
+          <div class="row g-4">
+            <!-- Apply Form -->
+            <div class="col-lg-5">
+              <div class="card-main">
+                <div class="card-header">
+                  <h5 class="mb-0"><i class="fa-solid fa-paper-plane text-primary me-2"></i>Submit Leave Request</h5>
+                </div>
+                <div class="card-body">
+                  <form id="applyLeaveForm">
+                    <div class="mb-3">
+                      <label for="leave_type" class="form-label fw-medium">Leave Type</label>
+                      <select class="form-select" id="leave_type" required>
+                        <option value="" disabled selected>Select Leave Category</option>
+                        <option value="Sick">Sick Leave</option>
+                        <option value="Casual">Casual Leave</option>
+                        <option value="Earned">Earned Leave</option>
+                        <option value="Half Day">Half Day Leave</option>
+                      </select>
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                      <div class="col-6">
+                        <label for="start_date" class="form-label fw-medium">Start Date</label>
+                        <input type="date" class="form-control" id="start_date" required>
+                      </div>
+                      <div class="col-6">
+                        <label for="end_date" class="form-label fw-medium">End Date</label>
+                        <input type="date" class="form-control" id="end_date" required>
+                      </div>
+                    </div>
+
+                    <div class="mb-4">
+                      <label for="leave_reason" class="form-label fw-medium">Reason for Leave</label>
+                      <textarea class="form-control" id="leave_reason" rows="4" placeholder="Briefly describe the reason for your application..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-hub w-100 py-2 border-0">
+                      <i class="fa-regular fa-paper-plane me-2"></i>Apply Request
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Leaves Log List -->
+            <div class="col-lg-7">
+              <div class="card-main">
+                <div class="card-header">
+                  <h5 class="mb-0"><i class="fa-solid fa-list-check text-primary me-2"></i>My Leave History</h5>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hub mb-0">
+                      <thead>
+                        <tr>
+                          <th>Category</th>
+                          <th>Duration</th>
+                          <th>Reason</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="leaves-history-table">
+                        <!-- Dynamic rendering -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 4: SALARY DETAILS ================= -->
+        <section id="tab-salary" class="tab-content d-none fade-in">
+          <div class="card-main">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="fa-solid fa-receipt text-primary me-2"></i>My Payslips & Salary Log</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hub mb-0">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Basic Salary</th>
+                      <th>Allowances</th>
+                      <th>Deductions</th>
+                      <th>Net Salary</th>
+                      <th>Payment Date</th>
+                      <th>Slip</th>
+                    </tr>
+                  </thead>
+                  <tbody id="salaries-table">
+                    <!-- Dynamic rendering -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 5: PROFILE ================= -->
+        <section id="tab-profile" class="tab-content d-none fade-in">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="card-main text-center">
+                <div class="card-header bg-light border-0 py-4">
+                  <div class="avatar-circle avatar-large user-initials">EH</div>
+                  <h4 class="mb-1 user-fullname fw-bold">Employee Full Name</h4>
+                  <p class="text-muted mb-0" id="profile-designation">Designation</p>
+                </div>
+                <div class="card-body">
+                  <div class="row text-start g-4">
+                    <div class="col-sm-6 border-bottom pb-3">
+                      <div class="text-muted" style="font-size: 0.85rem;">Email Address</div>
+                      <div class="fw-semibold mt-1" id="profile-email">name@company.com</div>
+                    </div>
+                    <div class="col-sm-6 border-bottom pb-3">
+                      <div class="text-muted" style="font-size: 0.85rem;">Department</div>
+                      <div class="fw-semibold mt-1" id="profile-department">Engineering</div>
+                    </div>
+                    <div class="col-sm-6 border-bottom pb-3">
+                      <div class="text-muted" style="font-size: 0.85rem;">Date of Joining</div>
+                      <div class="fw-semibold mt-1" id="profile-joining">2025-01-01</div>
+                    </div>
+                    <div class="col-sm-6 border-bottom pb-3">
+                      <div class="text-muted" style="font-size: 0.85rem;">Basic Salary Package</div>
+                      <div class="fw-semibold mt-1" id="profile-salary">$0.00</div>
+                    </div>
+                    <div class="col-sm-6 border-bottom pb-3">
+                      <div class="text-muted" style="font-size: 0.85rem;">Job Status</div>
+                      <div class="mt-1">
+                        <span class="status-badge badge-present px-3" id="profile-status">Active</span>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 border-bottom pb-3 d-none" id="profile-deposit-container">
+                      <div class="text-muted" style="font-size: 0.85rem;">Security Deposit</div>
+                      <div class="fw-semibold mt-1">
+                        Total: <span id="profile-deposit-total">₹0.00</span> | 
+                        Paid: <span id="profile-deposit-paid">₹0.00</span> | 
+                        Balance: <span id="profile-deposit-balance">₹0.00</span>
+                        <small class="text-muted d-block mt-1 fw-normal" style="font-size: 0.72rem;">Deduction Rule: <span id="profile-deposit-rule">monthly</span></small>
+                      </div>
+                    </div>
+                    <div class="col-sm-6 border-bottom pb-3">
+                      <div class="text-muted" style="font-size: 0.85rem;">Portal Role</div>
+                      <div class="fw-semibold mt-1 text-uppercase">Employee</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Salary Slip View Modal -->
+  <div class="modal fade" id="payslipModal" tabindex="-1" aria-labelledby="payslipModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
+        <div class="modal-header border-bottom-0 pt-4 px-4">
+          <h5 class="modal-title fw-bold" id="payslipModalLabel">Salary Statement Slip</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <div class="border rounded p-4 bg-light mb-3">
+            <div class="d-flex justify-content-between border-bottom pb-3 mb-3">
+              <div>
+                <h5 class="fw-bold mb-0 text-primary">TrueTwist</h5>
+                <small class="text-muted">Salary Slip Statement</small>
+              </div>
+              <div class="text-end">
+                <span class="badge bg-success" style="font-size: 0.8rem;">PAID</span>
+              </div>
+            </div>
+            
+            <div class="row g-3 mb-3" style="font-size: 0.9rem;">
+              <div class="col-6">
+                <span class="text-muted d-block">Employee Name:</span>
+                <strong class="user-fullname">John Doe</strong>
+              </div>
+              <div class="col-6">
+                <span class="text-muted d-block">Statement Month:</span>
+                <strong id="slip-month">June 2026</strong>
+              </div>
+              <div class="col-6">
+                <span class="text-muted d-block">Department:</span>
+                <strong id="slip-department">Engineering</strong>
+              </div>
+              <div class="col-6">
+                <span class="text-muted d-block">Payment Date:</span>
+                <strong id="slip-payment-date">2026-06-28</strong>
+              </div>
+            </div>
+
+            <div class="border-top pt-3">
+              <div class="d-flex justify-content-between py-1">
+                <span>Basic Salary:</span>
+                <span class="font-monospace" id="slip-basic-salary">$0.00</span>
+              </div>
+              <div class="d-flex justify-content-between py-1 text-success">
+                <span>Allowances (+):</span>
+                <span class="font-monospace" id="slip-allowances">$0.00</span>
+              </div>
+              <div class="d-flex justify-content-between py-1 text-danger">
+                <span>Deductions (-):</span>
+                <span class="font-monospace" id="slip-deductions">$0.00</span>
+              </div>
+              <div class="d-flex justify-content-between py-1 text-danger d-none" id="slip-deposit-deduction-row">
+                <span>Security Deposit Deduction (-):</span>
+                <span class="font-monospace" id="slip-deposit-deduction">$0.00</span>
+              </div>
+              <hr class="my-2">
+              <div class="d-flex justify-content-between py-1 fw-bold fs-5 text-dark">
+                <span>Net Salary Paid:</span>
+                <span class="font-monospace" id="slip-net-salary">$0.00</span>
+              </div>
+            </div>
+
+            <div class="border-top pt-2 mt-2 d-none" id="slip-breakdown-container">
+              <span class="text-muted d-block mb-1" style="font-size:0.75rem;">Calculation Details:</span>
+              <div class="font-monospace text-secondary p-2 bg-white rounded border" id="slip-breakdown-text" style="font-size:0.75rem; white-space: pre-wrap; line-height: 1.3;"></div>
+            </div>
+          </div>
+          <button class="btn btn-primary-hub w-100 border-0 py-2" onclick="window.print()">
+            <i class="fa-solid fa-print me-2"></i>Print Payslip
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Shared JS utilities -->
+  <script src="/js/app.js"></script>
+  <!-- Employee Dashboard Logic -->
+  <script src="/js/employee.js"></script>
+</body>
+</html>

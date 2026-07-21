@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - TrueTwist</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Custom Styling -->
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="login-body">
+
+  <div class="login-wrapper">
+    <div class="login-container-split">
+      
+
+      
+      <!-- Right: Form Interaction Panel (Login / Sign Up) -->
+      <div class="form-panel">
+        <div class="form-content">
+          
+          <!-- Tab Switches -->
+          <div class="d-flex mb-4 gap-2" style="background: rgba(0,0,0,0.1); padding: 5px; border-radius: 12px;">
+            <button type="button" id="tabLoginBtn" class="btn btn-sm text-white w-50 py-2 border-0 active" style="background-color: rgba(255,255,255,0.15); border-radius: 8px; font-weight: 600; font-size: 0.9rem;">Sign In</button>
+            <button type="button" id="tabRegisterBtn" class="btn btn-sm text-white-50 w-50 py-2 border-0" style="background-color: transparent; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">Sign Up</button>
+          </div>
+
+          <h2 id="formTitle" class="mb-1">Sign In</h2>
+          <p id="formSubtitle" class="mb-4" style="font-size: 0.9rem;">Access the portal using your authorized credentials</p>
+          
+          <form id="loginForm">
+            <!-- Error Message Banner -->
+            <div id="loginError" class="alert alert-danger d-none mb-3" role="alert" style="border-radius: 10px; font-size: 0.88rem;">
+              Invalid credentials. Please try again.
+            </div>
+
+            <!-- Optional Name Field for Signup (Hidden by default) -->
+            <div id="registerFormGroup" class="visme-form-group d-none">
+              <label for="name">What's your name? *</label>
+              <div class="input-container-icon">
+                <i class="fa-regular fa-user"></i>
+                <input type="text" id="name" autocomplete="name" placeholder="John Doe">
+              </div>
+            </div>
+
+            <div class="visme-form-group">
+              <label for="email">Enter your email address *</label>
+              <div class="input-container-icon">
+                <i class="fa-regular fa-envelope"></i>
+                <input type="email" id="email" required autocomplete="email" placeholder="name@company.com">
+              </div>
+            </div>
+
+            <div class="visme-form-group">
+              <label for="password">Enter your password *</label>
+              <div class="input-container-icon">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••">
+                <i class="fa-solid fa-eye-slash password-toggle-icon" onclick="togglePasswordVisibility('password', this)"></i>
+              </div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-visme-primary">
+              <span>Sign In</span>
+              <i class="fa-solid fa-right-to-bracket ms-2"></i>
+            </button>
+          </form>
+
+          <!-- Social Sign In Icons -->
+          <div class="social-login-container text-center mt-4">
+            <p class="social-title mb-2" style="font-size: 0.82rem; color: rgba(255,255,255,0.6);">Or login with</p>
+            <div class="d-flex justify-content-center gap-3">
+              <button class="social-icon-btn"><i class="fa-brands fa-google"></i></button>
+              <button class="social-icon-btn"><i class="fa-brands fa-x-twitter"></i></button>
+              <button class="social-icon-btn"><i class="fa-brands fa-facebook-f"></i></button>
+            </div>
+          </div>
+
+          <!-- Testing Credentials Visual Helper -->
+          <div class="visme-credentials">
+            <div class="d-flex align-items-center mb-3" style="font-size: 0.8rem; color: rgba(255,255,255,0.75);">
+              <i class="fa-solid fa-circle-info me-2 text-warning"></i>
+              <span class="fw-semibold">Default testing credentials</span>
+            </div>
+            <div class="visme-helper-bubble mb-2">
+              <span class="badge bg-primary-light text-primary py-1 px-2" style="font-size: 0.72rem; border-radius: 6px;">Admin</span>
+              <code>urvashinocturnesoft@gmail.com</code>
+            </div>
+            <div class="visme-helper-bubble">
+              <span class="badge bg-secondary-light text-white py-1 px-2" style="font-size: 0.72rem; border-radius: 6px;">Employee</span>
+              <code>john.doe@employeehub.com</code>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Shared Javascript utilities -->
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Spotlight Mouse Tracking Effect
+      const card = document.querySelector('.login-container-split');
+      if (card) {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      }
+
+      // If already logged in, redirect straight to their dashboard
+      const token = getToken();
+      const user = getUser();
+      if (token && user) {
+        if (user.role === 'admin') {
+          window.location.href = '/admin.html';
+        } else {
+          window.location.href = '/dashboard.html';
+        }
+      }
+
+      const form = document.getElementById('loginForm');
+      const errorDiv = document.getElementById('loginError');
+
+      const tabLoginBtn = document.getElementById('tabLoginBtn');
+      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+      const registerFormGroup = document.getElementById('registerFormGroup');
+      const formTitle = document.getElementById('formTitle');
+      const formSubtitle = document.getElementById('formSubtitle');
+      const submitBtn = document.getElementById('submitBtn');
+      const nameInput = document.getElementById('name');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+
+
+      let activeTab = 'login';
+
+      // Switch to Login Tab
+      tabLoginBtn.addEventListener('click', () => {
+        activeTab = 'login';
+        tabLoginBtn.classList.add('active');
+        tabLoginBtn.style.backgroundColor = 'rgba(255,255,255,0.15)';
+        tabLoginBtn.style.color = '#fff';
+        tabRegisterBtn.classList.remove('active');
+        tabRegisterBtn.style.backgroundColor = 'transparent';
+        tabRegisterBtn.style.color = 'rgba(255,255,255,0.5)';
+        
+        formTitle.textContent = 'Sign In';
+        formSubtitle.textContent = 'Access the portal using your authorized credentials';
+        registerFormGroup.classList.add('d-none');
+        nameInput.required = false;
+        
+        submitBtn.querySelector('span').textContent = 'Sign In';
+        submitBtn.querySelector('i').className = 'fa-solid fa-right-to-bracket ms-2';
+      });
+
+      // Switch to Signup Tab
+      tabRegisterBtn.addEventListener('click', () => {
+        activeTab = 'register';
+        tabRegisterBtn.classList.add('active');
+        tabRegisterBtn.style.backgroundColor = 'rgba(255,255,255,0.15)';
+        tabRegisterBtn.style.color = '#fff';
+        tabLoginBtn.classList.remove('active');
+        tabLoginBtn.style.backgroundColor = 'transparent';
+        tabLoginBtn.style.color = 'rgba(255,255,255,0.5)';
+        
+        formTitle.textContent = 'Sign Up';
+        formSubtitle.textContent = 'Submit your registration details for admin approval';
+        registerFormGroup.classList.remove('d-none');
+        nameInput.required = true;
+        
+        submitBtn.querySelector('span').textContent = 'Submit Request';
+        submitBtn.querySelector('i').className = 'fa-solid fa-paper-plane ms-2';
+      });
+
+
+
+      // Form Submit
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorDiv.classList.add('d-none');
+
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        if (activeTab === 'register') {
+          const name = nameInput.value;
+          alert(`Registration Request Submitted for ${name}! Please ask Admin Urvashi to approve your credentials.`);
+          form.reset();
+          tabLoginBtn.click();
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Login failed');
+          }
+
+          // Save credentials in storage
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+
+          // Role based routing
+          if (data.user.role === 'admin') {
+            window.location.href = '/admin.html';
+          } else {
+            window.location.href = '/dashboard.html';
+          }
+        } catch (err) {
+          console.error(err);
+          errorDiv.textContent = err.message;
+          errorDiv.classList.remove('d-none');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

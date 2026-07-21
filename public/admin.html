@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - TrueTwist</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Custom Styling -->
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar collapsed">
+      <div class="sidebar-header d-flex justify-content-center py-3">
+        <img src="/logo.png" alt="TrueTwist Logo" style="max-height: 110px; width: auto; object-fit: contain;">
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item active" data-tab="tab-admin-dashboard">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-chart-pie"></i>Overview
+          </a>
+        </li>
+        <li class="sidebar-menu-item" data-tab="tab-admin-employees">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-users"></i>Manage Employees
+          </a>
+        </li>
+        <li class="sidebar-menu-item" data-tab="tab-admin-attendance">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-calendar-days"></i>Attendance Logs
+          </a>
+        </li>
+          <li class="sidebar-menu-item" data-tab="tab-admin-profile">
+            <a href="#" class="sidebar-menu-link">
+              <i class="fa-solid fa-user"></i>My Profile
+            </a>
+          </li>
+          <li class="sidebar-menu-item" data-tab="tab-admin-leaves">
+            <a href="#" class="sidebar-menu-link">
+              <i class="fa-solid fa-envelope-open-text"></i>Leave Requests
+              <span class="badge bg-danger rounded-pill ms-auto d-none" id="sidebar-leaves-badge">0</span>
+            </a>
+          </li>
+                <li class="sidebar-menu-item" data-tab="tab-admin-salaries">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-calculator"></i>Salary Processing
+            <span class="badge bg-danger rounded-pill ms-auto d-none" id="sidebar-salary-badge">0</span>
+          </a>
+        </li>
+        <li class="sidebar-menu-item" data-tab="tab-admin-holidays">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-umbrella-beach"></i>Holiday Calendar
+          </a>
+        </li>
+        <li class="sidebar-menu-item" data-tab="tab-admin-settings">
+          <a href="#" class="sidebar-menu-link">
+            <i class="fa-solid fa-gear"></i>Settings
+          </a>
+        </li>
+        </ul>
+
+
+      <div class="sidebar-footer">
+        <button class="btn btn-outline-danger w-100 border-0 text-start ps-3" onclick="logout()">
+          <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main class="main-content">
+      <!-- Top Navbar Header -->
+      <header class="top-navbar">
+        <div class="d-flex align-items-center">
+          <button class="navbar-toggle-btn me-3"><i class="fa-solid fa-bars"></i></button>
+          <h5 class="mb-0 fw-semibold text-secondary" id="page-title">Overview Stats</h5>
+        </div>
+        
+        <div class="d-flex align-items-center">
+          <span class="me-3 text-secondary d-none d-md-inline">Signed in as: <strong class="user-fullname" style="color: #1f2937;">Admin</strong></span>
+          <div class="avatar-circle user-initials" style="background-color: var(--dark-sidebar-active);">AD</div>
+        </div>
+      </header>
+
+      <!-- Viewport Body -->
+      <div class="content-body">
+        
+        <!-- ================= SECTION 1: OVERVIEW ================= -->
+        <section id="tab-admin-dashboard" class="tab-content fade-in">
+          <div class="row g-4 mb-4">
+            <!-- Present Today Widget -->
+            <div class="col-sm-6 col-lg-3">
+              <div class="stat-card stat-card-success p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <p class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">Present Today</p>
+                    <h3 class="mb-0 fw-bold" id="stat-present-today">0</h3>
+                  </div>
+                  <div class="stat-card-icon">
+                    <i class="fa-solid fa-user-check"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- On Leave Today Widget -->
+            <div class="col-sm-6 col-lg-3">
+              <div class="stat-card stat-card-warning p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <p class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">On Leave Today</p>
+                    <h3 class="mb-0 fw-bold" id="stat-leave-today">0</h3>
+                  </div>
+                  <div class="stat-card-icon">
+                    <i class="fa-solid fa-plane-departure"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Absent Today Widget -->
+            <div class="col-sm-6 col-lg-3">
+              <div class="stat-card stat-card-danger p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <p class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">Absent Today</p>
+                    <h3 class="mb-0 fw-bold" id="stat-absent-today">0</h3>
+                  </div>
+                  <div class="stat-card-icon">
+                    <i class="fa-solid fa-user-minus"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Total Head Count -->
+            <div class="col-sm-6 col-lg-3">
+              <div class="stat-card stat-card-primary p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <p class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">Active Employees</p>
+                    <h3 class="mb-0 fw-bold" id="stat-total-headcount">0</h3>
+                  </div>
+                  <div class="stat-card-icon">
+                    <i class="fa-solid fa-users"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-lg-6">
+              <div class="card-main h-100">
+                <div class="card-header">
+                  <h5 class="mb-0"><i class="fa-solid fa-circle-info text-primary me-2"></i>Admin Dashboard Summary</h5>
+                </div>
+                <div class="card-body">
+                  <p class="text-muted mb-3">Use the sidebar links to navigate. You can perform Employee onboarding and updates, monitor check-in grids in real-time, approve or reject leave submissions, and review salary structures and disburse payslips.</p>
+                  <p class="text-muted mb-0"><strong>Office Shift Policy:</strong> Shift hours are <strong>9:30 AM to 6:30 PM</strong>. Sundays are paid holidays. Leaves are unpaid and deduct daily rate. Automated calculation applies partial hour deductions for late check-in or early check-out.</p>
+                  <hr class="my-3">
+                  <div class="d-flex gap-3 flex-wrap">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge bg-warning text-dark px-2 py-1" style="font-size:0.72rem;">🍜 Lunch Limit</span>
+                      <span class="fw-semibold text-dark">45 minutes</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge bg-info text-white px-2 py-1" style="font-size:0.72rem;">☕ Tea Limit</span>
+                      <span class="fw-semibold text-dark">15 minutes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-lg-6">
+              <div class="card-main h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0"><i class="fa-solid fa-bolt text-warning me-2"></i>Recent Activities</h5>
+                  <button class="btn btn-sm btn-outline-secondary py-1 px-2 border-0" onclick="loadRecentActivities()" title="Refresh Log Feed">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                  </button>
+                </div>
+                <div class="card-body p-0" style="max-height: 250px; overflow-y: auto;">
+                  <ul class="list-group list-group-flush" id="recent-activities-list">
+                    <li class="list-group-item text-center py-4 text-muted"><i class="fa-solid fa-spinner fa-spin me-2"></i>Loading logs feed...</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Break Violations Today Widget -->
+          <div class="row g-4 mt-1">
+            <div class="col-12">
+              <div class="card-main">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">
+                    <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>
+                    Today's Break Usage &amp; Violations
+                    <span class="badge bg-danger ms-2 d-none" id="break-violation-count-badge" style="font-size:0.75rem;">0</span>
+                  </h5>
+                  <button class="btn btn-sm btn-outline-secondary py-1 px-2 border-0" onclick="loadBreakViolations()" title="Refresh">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                  </button>
+                </div>
+                <div class="card-body p-0" style="max-height: 280px; overflow-y: auto;">
+                  <div id="break-violations-container" class="p-3 text-center text-muted">
+                    <i class="fa-solid fa-spinner fa-spin me-2"></i>Loading break data...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 2: EMPLOYEES DIRECTORY ================= -->
+        <section id="tab-admin-employees" class="tab-content d-none fade-in">
+          <div class="card-main">
+            <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <h5 class="mb-0"><i class="fa-solid fa-users-gear text-primary me-2"></i>Employee Directory</h5>
+              <div class="d-flex gap-2">
+                <input type="text" id="search-employee" class="form-control form-control-sm" style="max-width: 220px;" placeholder="Search employee..." onkeyup="filterEmployees()">
+                <button class="btn btn-sm btn-primary-hub border-0" onclick="openAddEmployeeModal()">
+                  <i class="fa-solid fa-plus me-1"></i>Add Employee
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hub mb-0">
+                  <thead>
+                    <tr>
+                      <th>Employee Details</th>
+                      <th>Dept & Role</th>
+                      <th>Joining Date</th>
+                      <th>Salary Package</th>
+                      <th>Status</th>
+                      <th class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="employees-directory-table">
+                    <!-- Dynamic rendering -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 3: ATTENDANCE LOGS ================= -->
+        <section id="tab-admin-attendance" class="tab-content d-none fade-in">
+          <div class="card-main">
+            <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <h5 class="mb-0"><i class="fa-solid fa-clipboard-list text-primary me-2"></i>Overall Attendance Tracker</h5>
+              <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                  <label for="admin-filter-date" class="text-muted text-nowrap mb-0 me-1" style="font-size: 0.85rem;">Date:</label>
+                  <input type="date" id="admin-filter-date" class="form-control form-control-sm" style="max-width: 150px;" onchange="loadGlobalAttendance()">
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <label for="admin-filter-employee" class="text-muted text-nowrap mb-0 me-1" style="font-size: 0.85rem;">Employee:</label>
+                  <select id="admin-filter-employee" class="form-select form-select-sm" style="max-width: 180px;" onchange="loadGlobalAttendance()">
+                    <option value="">All Employees</option>
+                  </select>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <button class="btn btn-sm btn-success border-0 px-2" onclick="openAddAttendanceModal()" title="Add Manual Attendance Log">
+                    <i class="fa-solid fa-calendar-plus me-1"></i>Add Log
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary px-2" onclick="document.getElementById('admin-filter-date').value = ''; loadGlobalAttendance();" title="Clear Date Filter">
+                    <i class="fa-solid fa-calendar-xmark me-1"></i>Clear Date
+                  </button>
+                  <button class="btn btn-sm btn-primary-hub border-0" onclick="loadGlobalAttendance()" title="Refresh Logs">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hub mb-0">
+                  <thead>
+                    <tr>
+                      <th>Employee Name</th>
+                      <th>Email / Department</th>
+                      <th>Log Date</th>
+                      <th>Check In</th>
+                      <th>Check Out</th>
+                      <th>Breaks</th>
+                      <th>Status</th>
+                      <th class="text-end">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-attendance-table">
+                    <!-- Dynamic rendering -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 4: LEAVE REQUESTS ================= -->
+        <section id="tab-admin-leaves" class="tab-content d-none fade-in">
+          <div class="card-main">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="fa-solid fa-envelopes-bulk text-primary me-2"></i>Employee Leave Applications</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hub mb-0">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Leave Type</th>
+                      <th>Date Period</th>
+                      <th>Reason</th>
+                      <th>Status</th>
+                      <th class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-leaves-table">
+                    <!-- Dynamic rendering -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 5: SALARY PROCESS ================= -->
+        <section id="tab-admin-salaries" class="tab-content d-none fade-in">
+          <div class="row g-4">
+            <!-- Payout Generator Form -->
+            <div class="col-lg-4">
+              <div class="card-main">
+                <div class="card-header">
+                  <h5 class="mb-0"><i class="fa-solid fa-calculator text-primary me-2"></i>Disburse Salary Slip</h5>
+                </div>
+                <div class="card-body">
+                  <form id="payoutForm">
+                    <div class="mb-3">
+                      <label for="payout_user_id" class="form-label fw-medium">Employee</label>
+                      <select class="form-select" id="payout_user_id" onchange="updatePayoutBasicSalary()" required>
+                        <option value="" disabled selected>Select Employee</option>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="payout_month" class="form-label fw-medium">Salary Month</label>
+                      <input type="month" class="form-control" id="payout_month" required>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-medium">Basic Salary Package</label>
+                      <div class="input-group">
+                        <span class="input-group-text bg-light text-muted"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+                        <input type="text" class="form-control bg-light" id="payout_basic" value="0.00" readonly>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="payout_calc_mode" class="form-label fw-medium">Calculation Mode</label>
+                      <select class="form-select" id="payout_calc_mode" onchange="togglePayoutCalcMode()">
+                        <option value="auto">Auto-Calculate from Shift Logs</option>
+                        <option value="manual">Enter Manual Shift Details</option>
+                      </select>
+                    </div>
+
+                    <!-- Manual Shift Details inputs container (hidden by default) -->
+                    <div class="border rounded p-3 bg-light mb-3 d-none" id="manual-calc-inputs">
+                      <h6 class="fw-bold mb-3" style="font-size:0.85rem;"><i class="fa-solid fa-list-check text-primary me-2"></i>Enter Attendance Details</h6>
+                      <div class="row g-2 mb-2">
+                        <div class="col-6">
+                          <label for="man_absent_days" class="form-label mb-1" style="font-size:0.75rem;">Absent Days</label>
+                          <input type="number" class="form-control form-control-sm" id="man_absent_days" min="0" value="0" oninput="calculateManualSalary()">
+                        </div>
+                        <div class="col-6">
+                          <label for="man_half_days" class="form-label mb-1" style="font-size:0.75rem;">Half Days</label>
+                          <input type="number" class="form-control form-control-sm" id="man_half_days" min="0" value="0" oninput="calculateManualSalary()">
+                        </div>
+                      </div>
+                      <div class="row g-2">
+                        <div class="col-4">
+                          <label for="man_late_hours" class="form-label mb-1" style="font-size:0.75rem;">Late Hours</label>
+                          <input type="number" class="form-control form-control-sm" id="man_late_hours" min="0" step="any" value="0" oninput="calculateManualSalary()">
+                        </div>
+                        <div class="col-4">
+                          <label for="man_late_minutes" class="form-label mb-1" style="font-size:0.75rem;">Late Minutes</label>
+                          <input type="number" class="form-control form-control-sm" id="man_late_minutes" min="0" max="59" step="any" value="0" oninput="calculateManualSalary()">
+                        </div>
+                        <div class="col-4">
+                          <label for="man_missing_checkout" class="form-label mb-1" style="font-size:0.75rem;">No Checkouts</label>
+                          <input type="number" class="form-control form-control-sm" id="man_missing_checkout" min="0" value="0" oninput="calculateManualSalary()">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mb-3" id="auto-calc-btn-container">
+                      <button type="button" class="btn btn-sm btn-outline-primary w-100 py-2 fw-semibold" id="btn-calc-salary" onclick="triggerAutoCalculation()">
+                        <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Auto-Calculate from Shift Logs
+                      </button>
+                    </div>
+
+                    <div class="mb-3 d-none border rounded p-3 bg-light font-monospace" id="calc-summary-box" style="font-size: 0.8rem;">
+                      <!-- Dynamic calculations log -->
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                      <div class="col-6">
+                        <label for="payout_allowances" class="form-label fw-medium">Allowances</label>
+                        <input type="number" class="form-control" id="payout_allowances" min="0" step="any" value="0">
+                      </div>
+                      <div class="col-6">
+                        <label for="payout_deductions" class="form-label fw-medium">Deductions</label>
+                        <input type="number" class="form-control" id="payout_deductions" min="0" step="any" value="0">
+                      </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-hub w-100 py-2 border-0 mt-2">
+                      <i class="fa-solid fa-circle-dollar-to-slot me-2"></i>Process Payout
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Generated Statements Log -->
+            <div class="col-lg-8">
+              <div class="card-main">
+                <div class="card-header">
+                  <h5 class="mb-0"><i class="fa-solid fa-receipt text-primary me-2"></i>Global Salary Log</h5>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hub mb-0">
+                      <thead>
+                        <tr>
+                          <th>Employee</th>
+                          <th>Month</th>
+                          <th>Basic</th>
+                          <th>Allowance</th>
+                          <th>Deduction</th>
+                          <th>Net Salary</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="admin-salaries-table">
+                        <!-- Dynamic rendering -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 6: HOLIDAY CALENDAR ================= -->
+        <section id="tab-admin-holidays" class="tab-content d-none fade-in">
+          <div class="row g-4">
+            <!-- Declare Holiday Form -->
+            <div class="col-lg-4">
+              <div class="card-main">
+                <div class="card-header">
+                  <h5 class="mb-0"><i class="fa-solid fa-umbrella-beach text-primary me-2"></i>Declare Holiday</h5>
+                </div>
+                <div class="card-body">
+                  <form id="holidayForm" onsubmit="addHoliday(event)">
+                    <div class="mb-3">
+                      <label for="holiday_date" class="form-label fw-medium">Holiday Date</label>
+                      <input type="date" class="form-control" id="holiday_date" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="holiday_name" class="form-label fw-medium">Holiday Name / Occasion</label>
+                      <input type="text" class="form-control" id="holiday_name" placeholder="e.g. Independence Day" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary-hub w-100 py-2 border-0 fw-semibold">
+                      <i class="fa-solid fa-plus me-2"></i>Add Holiday
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Holidays List -->
+            <div class="col-lg-8">
+              <div class="card-main">
+                <div class="card-header">
+                  <h5 class="mb-0"><i class="fa-solid fa-list-ul text-primary me-2"></i>Declared Holidays Calendar</h5>
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hub mb-0">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Holiday Name / Occasion</th>
+                          <th style="width: 100px;">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="admin-holidays-table">
+                        <!-- Rendered dynamically -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SECTION 7: SETTINGS ================= -->
+        <section id="tab-admin-settings" class="tab-content d-none fade-in">
+          <div class="row g-4">
+            <!-- Change My Password Card -->
+            <div class="col-md-6">
+              <div class="card-main">
+                <div class="card-header border-0 pb-0">
+                  <h5 class="mb-0 text-dark fw-bold"><i class="fa-solid fa-key text-primary me-2"></i>Change My Password</h5>
+                </div>
+                <div class="card-body">
+                  <form id="adminChangePasswordForm" onsubmit="changeAdminPassword(event)">
+                    <div class="mb-3">
+                      <label class="form-label fw-medium required">Current Password</label>
+                      <div class="position-relative">
+                        <input type="password" id="admin-current-pwd" class="form-control" placeholder="Enter current password" required style="padding-right: 40px;">
+                        <i class="fa-solid fa-eye-slash" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; z-index: 10;" onclick="togglePasswordVisibility('admin-current-pwd', this)"></i>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-medium required">New Password</label>
+                      <div class="position-relative">
+                        <input type="password" id="admin-new-pwd" class="form-control" placeholder="Enter new password" required style="padding-right: 40px;">
+                        <i class="fa-solid fa-eye-slash" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; z-index: 10;" onclick="togglePasswordVisibility('admin-new-pwd', this)"></i>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-medium required">Confirm New Password</label>
+                      <div class="position-relative">
+                        <input type="password" id="admin-confirm-pwd" class="form-control" placeholder="Confirm new password" required style="padding-right: 40px;">
+                        <i class="fa-solid fa-eye-slash" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; z-index: 10;" onclick="togglePasswordVisibility('admin-confirm-pwd', this)"></i>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary-hub border-0 w-100 py-2 fw-semibold">
+                      <i class="fa-solid fa-save me-2"></i>Update Password
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Change Employee Password Card -->
+            <div class="col-md-6">
+              <div class="card-main">
+                <div class="card-header border-0 pb-0">
+                  <h5 class="mb-0 text-dark fw-bold"><i class="fa-solid fa-user-shield text-primary me-2"></i>Reset Employee Password</h5>
+                </div>
+                <div class="card-body">
+                  <form id="adminResetEmployeePasswordForm" onsubmit="resetEmployeePassword(event)">
+                    <div class="mb-3">
+                      <label class="form-label fw-medium required">Select Employee</label>
+                      <select id="reset-employee-select" class="form-select" required>
+                        <option value="">-- Choose Employee --</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-medium required">New Password</label>
+                      <div class="position-relative">
+                        <input type="password" id="reset-employee-new-pwd" class="form-control" placeholder="Enter new password for employee" required style="padding-right: 40px;">
+                        <i class="fa-solid fa-eye-slash" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; z-index: 10;" onclick="togglePasswordVisibility('reset-employee-new-pwd', this)"></i>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100 py-2 border-0 fw-semibold text-white">
+                      <i class="fa-solid fa-shield-halved me-2"></i>Reset Password
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit Employee Modal -->
+  <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
+        <div class="modal-header border-bottom-0 pt-4 px-4">
+          <h5 class="modal-title fw-bold" id="employeeModalLabel">Employee Profile Setup</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <form id="employeeForm">
+            <!-- Hidden ID Field -->
+            <input type="hidden" id="form-employee-id">
+
+            <div class="mb-3">
+              <label for="form-employee-name" class="form-label fw-medium">Full Name</label>
+              <input type="text" class="form-control" id="form-employee-name" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="form-employee-email" class="form-label fw-medium">Email Address</label>
+              <input type="email" class="form-control" id="form-employee-email" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="form-employee-password" class="form-label fw-medium" id="label-password">Password</label>
+              <div class="position-relative">
+                <input type="password" class="form-control" id="form-employee-password" placeholder="••••••••" style="padding-right: 40px;">
+                <i class="fa-solid fa-eye-slash" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; z-index: 10;" onclick="togglePasswordVisibility('form-employee-password', this)"></i>
+              </div>
+              <small class="text-muted d-none" id="help-password">Leave blank if you don't wish to reset the password.</small>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="form-employee-role" class="form-label fw-medium">System Role</label>
+                <select class="form-select" id="form-employee-role" required>
+                  <option value="employee">Employee</option>
+                  <option value="admin">Administrator</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="form-employee-status" class="form-label fw-medium">Status</label>
+                <select class="form-select" id="form-employee-status" required>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="form-employee-dept" class="form-label fw-medium">Department</label>
+                <input type="text" class="form-control" id="form-employee-dept" placeholder="Engineering">
+              </div>
+              <div class="col-6">
+                <label for="form-employee-desg" class="form-label fw-medium">Designation</label>
+                <input type="text" class="form-control" id="form-employee-desg" placeholder="Senior Developer">
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="form-employee-join" class="form-label fw-medium">Joining Date</label>
+                <input type="date" class="form-control" id="form-employee-join" required>
+              </div>
+              <div class="col-6">
+                <label for="form-employee-salary" class="form-label fw-medium">Basic Salary (₹)</label>
+                <input type="number" class="form-control" id="form-employee-salary" min="0" step="any" required>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="form-employee-deposit-total" class="form-label fw-medium">Security Deposit (₹)</label>
+                <input type="number" class="form-control" id="form-employee-deposit-total" min="0" step="any" value="0">
+              </div>
+              <div class="col-6">
+                <label for="form-employee-deposit-type" class="form-label fw-medium">Deduction Method</label>
+                <select class="form-select" id="form-employee-deposit-type">
+                  <option value="monthly_2000">Deduct ₹2,000 Monthly</option>
+                  <option value="first_month">Deduct Full in First Month</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-4 d-none" id="edit-deposit-paid-container">
+              <label for="form-employee-deposit-paid" class="form-label fw-medium">Security Deposit Deducted/Paid So Far (₹)</label>
+              <input type="number" class="form-control" id="form-employee-deposit-paid" min="0" step="any" value="0">
+            </div>
+
+            <button type="submit" class="btn btn-primary-hub w-100 py-2 border-0">
+              <i class="fa-solid fa-save me-2"></i>Save Profile
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employee Documents Modal -->
+  <div class="modal fade" id="employeeDocsModal" tabindex="-1" aria-labelledby="employeeDocsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
+        <div class="modal-header pt-4 px-4 border-0">
+          <h5 class="modal-title fw-bold" id="employeeDocsModalLabel"><i class="fa-solid fa-folder-open text-primary me-2"></i>Attached Documents</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <h6 class="text-secondary fw-semibold mb-3">Employee: <span id="doc-employee-name" class="text-dark">--</span></h6>
+          
+          <!-- Documents List -->
+          <div class="border rounded p-3 bg-light mb-4" style="max-height: 200px; overflow-y: auto;">
+            <ul class="list-group list-group-flush mb-0" id="employee-docs-list">
+              <!-- Dynamic documents list -->
+            </ul>
+          </div>
+
+          <!-- Attach New Document Form -->
+          <h6 class="fw-bold border-top pt-3 mb-3">Attach New Document</h6>
+          <form id="addDocForm">
+            <input type="hidden" id="doc-employee-id">
+            <div class="mb-3">
+              <label for="doc-title" class="form-label fw-medium">Document Title</label>
+              <input type="text" class="form-control" id="doc-title" placeholder="e.g. Offer Letter, Aadhar Card, Degree" required>
+            </div>
+            <div class="mb-3">
+              <label for="doc-file" class="form-label fw-medium">Upload Document File (Images/PDFs)</label>
+              <input type="file" class="form-control" id="doc-file">
+            </div>
+            <div class="mb-3">
+              <label for="doc-path" class="form-label fw-medium">Or Enter Document Path / Link</label>
+              <input type="text" class="form-control" id="doc-path" placeholder="e.g. /uploads/offer.pdf or external url">
+            </div>
+            <button type="submit" class="btn btn-primary-hub w-100 py-2 border-0">
+              <i class="fa-solid fa-plus me-2"></i>Attach Document
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Attendance Modal -->
+  <div class="modal fade" id="attendanceEditModal" tabindex="-1" aria-labelledby="attendanceEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
+        <div class="modal-header pt-4 px-4 border-0">
+          <h5 class="modal-title fw-bold" id="attendanceEditModalLabel"><i class="fa-solid fa-user-pen text-primary me-2"></i>Edit Attendance Log</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <form id="attendanceEditForm">
+            <input type="hidden" id="edit-attendance-id">
+            
+            <div class="mb-3">
+              <label class="form-label fw-medium">Employee Name</label>
+              <input type="text" class="form-control bg-light" id="edit-attendance-name" readonly>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-medium">Date</label>
+              <input type="text" class="form-control bg-light" id="edit-attendance-date" readonly>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="edit-attendance-in" class="form-label fw-medium">Check In Time</label>
+                <input type="time" class="form-control" id="edit-attendance-in" step="1">
+              </div>
+              <div class="col-6">
+                <label for="edit-attendance-out" class="form-label fw-medium">Check Out Time</label>
+                <input type="time" class="form-control" id="edit-attendance-out" step="1">
+              </div>
+            </div>
+
+             <div class="mb-3">
+              <label for="edit-attendance-status" class="form-label fw-medium">Status</label>
+              <select class="form-select" id="edit-attendance-status" required>
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Half Day">Half Day</option>
+              </select>
+            </div>
+
+            <div class="row g-3 mb-3 border-top pt-3">
+              <div class="col-12 mb-1">
+                <h6 class="fw-bold text-secondary mb-0"><i class="fa-solid fa-bowl-food me-1"></i>Lunch Break</h6>
+              </div>
+              <div class="col-6">
+                <label for="edit-attendance-break1-start" class="form-label fw-medium mb-1">Start Time</label>
+                <input type="time" class="form-control" id="edit-attendance-break1-start" step="1">
+              </div>
+              <div class="col-6">
+                <label for="edit-attendance-break1-end" class="form-label fw-medium mb-1">End Time</label>
+                <input type="time" class="form-control" id="edit-attendance-break1-end" step="1">
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4 border-top pt-3">
+              <div class="col-12 mb-1">
+                <h6 class="fw-bold text-secondary mb-0"><i class="fa-solid fa-mug-hot me-1"></i>Tea Break</h6>
+              </div>
+              <div class="col-6">
+                <label for="edit-attendance-break2-start" class="form-label fw-medium mb-1">Start Time</label>
+                <input type="time" class="form-control" id="edit-attendance-break2-start" step="1">
+              </div>
+              <div class="col-6">
+                <label for="edit-attendance-break2-end" class="form-label fw-medium mb-1">End Time</label>
+                <input type="time" class="form-control" id="edit-attendance-break2-end" step="1">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary-hub w-100 py-2 border-0">
+              <i class="fa-solid fa-save me-2"></i>Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Attendance Modal -->
+  <div class="modal fade" id="attendanceManualModal" tabindex="-1" aria-labelledby="attendanceManualModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
+        <div class="modal-header pt-4 px-4 border-0">
+          <h5 class="modal-title fw-bold" id="attendanceManualModalLabel"><i class="fa-solid fa-calendar-plus text-primary me-2"></i>Add Attendance Log</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <form id="attendanceManualForm">
+            <div class="mb-3">
+              <label for="manual-attendance-user" class="form-label fw-medium">Select Employee</label>
+              <select class="form-select" id="manual-attendance-user" required>
+                <option value="" disabled selected>Select Employee</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="manual-attendance-date" class="form-label fw-medium">Date</label>
+              <input type="date" class="form-control" id="manual-attendance-date" required>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label for="manual-attendance-in" class="form-label fw-medium">Check In Time</label>
+                <input type="time" class="form-control" id="manual-attendance-in" step="1">
+              </div>
+              <div class="col-6">
+                <label for="manual-attendance-out" class="form-label fw-medium">Check Out Time</label>
+                <input type="time" class="form-control" id="manual-attendance-out" step="1">
+              </div>
+            </div>
+
+             <div class="mb-3">
+              <label for="manual-attendance-status" class="form-label fw-medium">Status</label>
+              <select class="form-select" id="manual-attendance-status" required>
+                <option value="Present" selected>Present</option>
+                <option value="Absent">Absent</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Half Day">Half Day</option>
+              </select>
+            </div>
+
+            <div class="row g-3 mb-3 border-top pt-3">
+              <div class="col-12 mb-1">
+                <h6 class="fw-bold text-secondary mb-0"><i class="fa-solid fa-bowl-food me-1"></i>Lunch Break</h6>
+              </div>
+              <div class="col-6">
+                <label for="manual-attendance-break1-start" class="form-label fw-medium mb-1">Start Time</label>
+                <input type="time" class="form-control" id="manual-attendance-break1-start" step="1">
+              </div>
+              <div class="col-6">
+                <label for="manual-attendance-break1-end" class="form-label fw-medium mb-1">End Time</label>
+                <input type="time" class="form-control" id="manual-attendance-break1-end" step="1">
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4 border-top pt-3">
+              <div class="col-12 mb-1">
+                <h6 class="fw-bold text-secondary mb-0"><i class="fa-solid fa-mug-hot me-1"></i>Tea Break</h6>
+              </div>
+              <div class="col-6">
+                <label for="manual-attendance-break2-start" class="form-label fw-medium mb-1">Start Time</label>
+                <input type="time" class="form-control" id="manual-attendance-break2-start" step="1">
+              </div>
+              <div class="col-6">
+                <label for="manual-attendance-break2-end" class="form-label fw-medium mb-1">End Time</label>
+                <input type="time" class="form-control" id="manual-attendance-break2-end" step="1">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary-hub w-100 py-2 border-0">
+              <i class="fa-solid fa-plus me-2"></i>Add Record
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Profile Modal -->
+  <div class="modal fade" id="adminProfileModal" tabindex="-1" aria-labelledby="adminProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: var(--border-radius); border: none;">
+        <div class="modal-header pt-4 px-4 border-0">
+          <h5 class="modal-title fw-bold" id="adminProfileModalLabel"><i class="fa-solid fa-user text-primary me-2"></i>Admin Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <div class="row g-3">
+            <div class="col-12 text-center mb-3">
+              <div class="avatar-circle avatar-large user-initials" id="admin-profile-initials">AD</div>
+              <h4 class="mt-2" id="admin-profile-name">Admin</h4>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-medium">Email</label>
+              <p class="form-control-plaintext" id="admin-profile-email"></p>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-medium">Department</label>
+              <p class="form-control-plaintext" id="admin-profile-dept"></p>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-medium">Designation</label>
+              <p class="form-control-plaintext" id="admin-profile-designation"></p>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-medium">Joining Date</label>
+              <p class="form-control-plaintext" id="admin-profile-joining"></p>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary-hub w-100 py-2 border-0 mt-3" data-bs-dismiss="modal"><i class="fa-solid fa-check me-2"></i>Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Shared JS utilities -->
+  <script src="/js/app.js"></script>
+  <!-- Admin Panel Logic -->
+  <script src="/js/admin.js"></script>
+</body>
+</html>

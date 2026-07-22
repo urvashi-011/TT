@@ -141,7 +141,7 @@ router.post('/employees', verifyToken, isAdmin, async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
-    await db.run(
+    const result = await db.run(
       `INSERT INTO users (name, email, password, role, department, designation, joining_date, salary, status, deposit_total, deposit_deduction_type, deposit_paid)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, 0)`,
       [
@@ -158,7 +158,23 @@ router.post('/employees', verifyToken, isAdmin, async (req, res) => {
       ]
     );
 
-    res.status(201).json({ message: 'Employee account created successfully.' });
+    res.status(201).json({
+      message: 'Employee account created successfully.',
+      employee: {
+        id: result.lastID,
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
+        role,
+        department: department || '',
+        designation: designation || '',
+        joining_date: joining_date || getTodayDate(),
+        salary: parseFloat(salary) || 0,
+        status: 'active',
+        deposit_total: parseFloat(deposit_total) || 0,
+        deposit_deduction_type: deposit_deduction_type || 'monthly_2000',
+        deposit_paid: 0
+      }
+    });
   } catch (err) {
     console.error('Create employee error:', err);
     res.status(500).json({ error: 'Server error creating employee record.' });
@@ -226,7 +242,23 @@ router.put('/employees/:id', verifyToken, isAdmin, async (req, res) => {
 
     await db.run(query, params);
 
-    res.json({ message: 'Employee details updated successfully.' });
+    res.json({
+      message: 'Employee details updated successfully.',
+      employee: {
+        id: parseInt(employeeId, 10),
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
+        role,
+        department: department || '',
+        designation: designation || '',
+        joining_date: joining_date || '',
+        salary: parseFloat(salary) || 0,
+        status,
+        deposit_total: parseFloat(deposit_total) || 0,
+        deposit_deduction_type: deposit_deduction_type || 'monthly_2000',
+        deposit_paid: parseFloat(deposit_paid) || 0
+      }
+    });
   } catch (err) {
     console.error('Update employee error:', err);
     res.status(500).json({ error: 'Server error updating employee record.' });

@@ -271,15 +271,65 @@ async function loadBreakViolations() {
   }
 }
 
+// Local storage persistent override helpers
+function getLocalEmployeeOverrides() {
+  try {
+    const data = localStorage.getItem('tt_employee_overrides');
+    return data ? JSON.parse(data) : { added: [], updated: {}, deleted: [] };
+  } catch (e) {
+    return { added: [], updated: {}, deleted: [] };
+  }
+}
+
+function saveLocalEmployeeOverrides(overrides) {
+  try {
+    localStorage.setItem('tt_employee_overrides', JSON.stringify(overrides));
+  } catch (e) {
+    console.error('Failed to save employee overrides:', e);
+  }
+}
+
 // Fetch and render Employees Directory
 async function loadEmployeesDirectory() {
   const tbody = document.getElementById('employees-directory-table');
   tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted"><i class="fa-solid fa-spinner fa-spin me-2"></i>Loading Directory...</td></tr>';
 
   try {
-    const data = await apiRequest('/admin/employees');
-    employeesListGlobal = data.employees;
+    let serverEmployees = [];
+    try {
+      const data = await apiRequest('/admin/employees');
+      serverEmployees = data.employees || [];
+    } catch (err) {
+      console.warn('Server fetch error, falling back to local list:', err);
+    }
+
+    const overrides = getLocalEmployeeOverrides();
     
+    // 1. Filter out deleted IDs
+    let merged = serverEmployees.filter(e => !overrides.deleted.includes(e.id));
+    
+    // 2. Apply updated employee records
+    merged = merged.map(e => {
+      if (overrides.updated[e.id]) {
+        return { ...e, ...overrides.updated[e.id] };
+      }
+      return e;
+    });
+
+    // 3. Append added employees (that are not already in server list)
+    if (Array.isArray(overrides.added)) {
+      overrides.added.forEach(addedEmp => {
+        const existsInServer = merged.some(e => String(e.id) === String(addedEmp.id) || e.email.toLowerCase() === addedEmp.email.toLowerCase());
+        if (!existsInServer && !overrides.deleted.includes(addedEmp.id)) {
+          merged.push(addedEmp);
+        }
+      });
+    }
+
+    // Sort alphabetically by name
+    merged.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+    employeesListGlobal = merged;
     renderEmployees(employeesListGlobal);
     populateEmployeeDropdowns();
   } catch (err) {
@@ -496,7 +546,38 @@ async function handleEmployeeSubmit(e) {
       body: JSON.stringify(body)
     });
 
-    showAlert(data.message, 'success');
+    const overrides = getLocalEmployeeOverrides();
+    const empObj = data.employee || {
+      id: isEdit ? parseInt(id, 10) : Date.now(),
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      role,
+      department: department || '',
+      designation: designation || '',
+      joining_date: joining_date || '',
+      salary: parseFloat(salary) || 0,
+      status: status || 'active',
+      deposit_total,
+      deposit_deduction_type,
+      deposit_paid
+    };
+
+    if (isEdit) {
+      const empIdInt = parseInt(id, 10);
+      overrides.updated[empIdInt] = empObj;
+      if (Array.isArray(overrides.added)) {
+        const idx = overrides.added.findIndex(a => String(a.id) === String(empIdInt));
+        if (idx !== -1) {
+          overrides.added[idx] = empObj;
+        }
+      }
+    } else {
+      if (!Array.isArray(overrides.added)) overrides.added = [];
+      overrides.added.push(empObj);
+    }
+    saveLocalEmployeeOverrides(overrides);
+
+    showAlert(data.message || 'Employee details saved successfully.', 'success');
     
     // Hide modal overlay
     const modalEl = document.getElementById('employeeModal');
@@ -522,7 +603,18 @@ async function deleteEmployee(id) {
       method: 'DELETE'
     });
 
-    showAlert(data.message, 'success');
+    const overrides = getLocalEmployeeOverrides();
+    const idInt = parseInt(id, 10);
+    if (!overrides.deleted.includes(idInt)) {
+      overrides.deleted.push(idInt);
+    }
+    delete overrides.updated[idInt];
+    if (Array.isArray(overrides.added)) {
+      overrides.added = overrides.added.filter(a => String(a.id) !== String(idInt));
+    }
+    saveLocalEmployeeOverrides(overrides);
+
+    showAlert(data.message || 'Employee deleted successfully.', 'success');
     loadEmployeesDirectory();
     loadOverviewStats();
   } catch (err) {

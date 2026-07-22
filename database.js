@@ -2,12 +2,24 @@ const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const fs = require('fs');
 
 const dbPath = process.env.VERCEL
   ? '/tmp/employeehub.db'
   : path.join(__dirname, 'employeehub.db');
 
 async function getDbConnection() {
+  if (process.env.VERCEL) {
+    const sourceDb = path.join(__dirname, 'employeehub.db');
+    if (!fs.existsSync('/tmp/employeehub.db') && fs.existsSync(sourceDb)) {
+      try {
+        fs.copyFileSync(sourceDb, '/tmp/employeehub.db');
+        console.log('Copied root database to /tmp/employeehub.db');
+      } catch (err) {
+        console.error('Error copying DB to /tmp:', err);
+      }
+    }
+  }
   return open({
     filename: dbPath,
     driver: sqlite3.Database
